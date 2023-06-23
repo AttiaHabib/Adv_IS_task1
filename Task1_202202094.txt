@@ -1,0 +1,112 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+import matplotlib
+matplotlib.rcParams['mathtext.fontset'] = 'stix'
+matplotlib.rcParams['font.family'] = 'STIXGeneral'
+
+
+register_summer_semester = np.asarray([941, 230, 813, 101, 462, 259, 211])
+succeeded_summer = np.asarray([42, 136, 99, 100, 190, 76, 111])
+faild_summer = register_summer_semester - succeeded_summer
+rate_succeeded_summer = np.rint((succeeded_summer / register_summer_semester) * 100).astype(int)
+
+register_winter_semester = np.asarray([448, 658, 228, 944, 290, 404, 568])
+succeeded_winter = np.asarray([144, 88, 201, 171, 104, 80, 129])
+faild_winter = register_winter_semester - succeeded_winter
+rate_succeeded_winter = np.rint((succeeded_winter / register_winter_semester) * 100).astype(int)
+
+
+fig, ax = plt.subplots()
+
+fig.set_size_inches(12, 8)
+
+index = np.arange(n_groups)
+bar_width = 0.28
+
+opacity = 0.4
+error_config = {'ecolor': '0.3'}
+
+rectsfaild_summer = ax.bar(index,
+                            faild_summer,
+                            bar_width,
+                            alpha=opacity,
+                            color='darkred',
+                            error_kw=error_config,
+                            label='faild_summer')
+
+rectssucceeded_summer = ax.bar(index,
+                            succeeded_summer,
+                            bar_width,
+                            bottom=faild_summer,
+                            alpha=opacity,
+                            color='red',
+                            error_kw=error_config,
+                            label='succeeded_summer')
+
+rectssummer = ax.bar(index,
+                   register_summer_semester,
+                   bar_width,
+                   alpha=0.2,
+                   color='white',
+                   error_kw=error_config,
+                   #                label='summer'
+                   )
+
+rectsfaild_winter = ax.bar(index + bar_width,
+                            faild_winter,
+                            bar_width,
+                            alpha=opacity,
+                            color='darkgreen',
+                            error_kw=error_config,
+                            label='faild_winter')
+
+rectssucceeded_winter = ax.bar(index + bar_width,
+                            succeeded_winter,
+                            bar_width,
+                            bottom=faild_winter,
+                            alpha=opacity,
+                            color='mediumseagreen',
+                            error_kw=error_config,
+                            label='succeeded_winter')
+
+rectswinter = ax.bar(index + bar_width,
+                   register_winter_semester,
+                   bar_width,
+                   alpha=0.2,
+                   color='white',
+                   error_kw=error_config,
+                   #                label='winter'
+                   )
+
+#
+
+ax.set_xlabel('Major Data Minining Students', fontsize=17)
+ax.set_ylabel('# university & Succeed Rate', fontsize=25)
+ax.set_title('Students_Stats (summer-winter)', fontsize=20)
+ax.set_xticks(index + bar_width)
+ax.set_xticklabels(('Math', 'OS', 'Database', 'software', 'french', 'Arabic', 'AI'))
+ax.legend()
+
+
+def autolabel(rects, accp_rates, accps, rejs):
+    """
+    Attach a text label above each bar displaying relevant information
+    """
+    for rect, accp_rate, accp, rej in zip(rects, accp_rates, accps, rejs):
+        height = rect.get_height()
+        ax.text(rect.get_x() + rect.get_width() / 2., height + 10,
+                str(accp_rate) + '%',
+                ha='center', va='bottom')
+        ax.text(rect.get_x() + rect.get_width() / 2., 0.9 * height,
+                '%d' % int(accp),
+                ha='center', va='bottom')
+        ax.text(rect.get_x() + rect.get_width() / 2., 0.4 * height,
+                '%d' % int(rej),
+                ha='center', va='bottom')
+
+
+autolabel(rectssummer, rate_succeeded_summer, succeeded_summer, faild_summer)
+autolabel(rectswinter, rate_succeeded_winter, succeeded_winter, faild_winter)
+plt.savefig('Students_Stats.png', dpi=330)
+plt.show()
